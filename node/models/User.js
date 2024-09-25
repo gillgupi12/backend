@@ -1,4 +1,4 @@
-const mongoose = require('mongose');
+const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const UserSchema = new mongoose.Schema({
@@ -31,20 +31,26 @@ const UserSchema = new mongoose.Schema({
     createdAt: { type: Date, default: Date.now() },
     isActive: { type: Boolean, default: true },
     isVerified: { type: Boolean, default: false },
-    updatedAt: { type: Date.now(), default: Date.now() },
+    updatedAt: { type: Date, default: Date.now() },
     lastLogin: {type: Date}
 })
 
-userSchema.pre('save', async function(next) {
+UserSchema.pre('save', async function(next) {
     if (this.isModified('passwordHash')) {
-        this.password_hash = await bcrypt.hash(this.password_hash, 10);
+        this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
     }
     next();
 });
 
-userSchema.methods.comparePassword = function(password) {
+UserSchema.methods.comparePassword = function(password) {
     return bcrypt.compare(password, this.passwordHash);
 };
 
+UserSchema.set('toJSON', {
+    transform: (doc, ret) => {
+        delete ret.passwordHash; // Remove the password field
+        return ret;
+    }
+});
 
 module.exports = mongoose.model('User', UserSchema)

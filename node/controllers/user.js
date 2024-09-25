@@ -1,13 +1,15 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const JWT_SECRET = 'okasy this is my damn secret hahaha'
+require('dotenv')
 
 
 const registerUser = async (req, res) => {
-    const { username, email, password, firstName, lastName, dateOfBirth, profilePictureUrl, phoneNumber, address } = req.body
+
+    const { userName, email, password, firstName, lastName, dateOfBirth, profilePictureUrl, phoneNumber, address } = req.body
     try {
-        const existingUser = await User.findOne({ username })
+        const existingUser = await User.findOne({ userName })
+
         if (existingUser) {
             return res.status(400).json({ message: 'User already exists' });
         }
@@ -16,7 +18,7 @@ const registerUser = async (req, res) => {
             return res.status(400).json({ message: 'Email already exists' });
         }
         const newUser = new User({
-            username,
+            userName,
             email,
             firstName,
             lastName,
@@ -25,20 +27,22 @@ const registerUser = async (req, res) => {
             profilePictureUrl: profilePictureUrl || '',
             phoneNumber: phoneNumber || null,
         })
-        await newUser.save();
-        res.status(200).json({ message: 'User registered successfully' });
+
+        const user = await User.create(newUser);
+        res.status(200).json({ message: 'User registered successfully', user });
     } catch (err) {
+        console.log(err)
         res.status(500).json({ message: 'Server error', err });
     }
 }
 
 const loginUser = async (req, res) => {
-    const { identifier, password } = req.body
+    const { userName, password } = req.body
     try {
         const existingUser = await User.findOne({
             $or: [
-                { email: identifier },
-                { username: identifier }
+                { email: userName },
+                { userName: userName }
             ]
         })
         if (!existingUser) {
@@ -49,7 +53,7 @@ const loginUser = async (req, res) => {
             res.status(400).json({ message: 'Invalid credentials!' })
         }
 
-        const token = jwt.sign({ id: existingUser._id }, JWT_SECRET, { expiresIn: '1h' })
+        const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
 
         res.status(200).json({ token, user: existingUser })
     } catch (err) {
@@ -58,7 +62,31 @@ const loginUser = async (req, res) => {
 
 }
 
-module.exports = { loginUser, registerUser }
+const getUsers = async (req, res) => {
+
+    const { page = 1, limit = 10 } = req.query;
+    try {
+
+        const users = await User.find()
+            .skip((page - 1) * limit)
+            .limit(Number(limit))
+            .select('-passwordHash');
+
+        const count = await User.countDocuments()
+
+        res.status(200).json({
+            message: 'Users retrived successfully!',
+            users,
+            totalUsers: count,
+            totalPages: Math.ceil(count / limit),
+            currentPage: Number(page)
+        })
+    } catch (err) {
+        res.status(500).json({ message: "Server error", err })
+    }
+}
+
+module.exports = { loginUser, registerUser, getUsers }
 
 
 
