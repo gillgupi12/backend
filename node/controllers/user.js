@@ -4,76 +4,16 @@ const jwt = require('jsonwebtoken')
 require('dotenv')
 
 
-const registerUser = async (req, res) => {
-
-    const { userName, email, password, firstName, lastName, dateOfBirth, profilePictureUrl, phoneNumber, address } = req.body
-    try {
-        const existingUser = await User.findOne({ userName })
-
-        if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
-        }
-        const existingEmail = await User.findOne({ email })
-        if (existingEmail) {
-            return res.status(400).json({ message: 'Email already exists' });
-        }
-        const newUser = new User({
-            userName,
-            email,
-            firstName,
-            lastName,
-            passwordHash: password,
-            dateOfBirth: dateOfBirth || null,
-            profilePictureUrl: profilePictureUrl || '',
-            phoneNumber: phoneNumber || null,
-        })
-
-        const user = await User.create(newUser);
-        res.status(200).json({ message: 'User registered successfully', user });
-    } catch (err) {
-        console.log(err)
-        res.status(500).json({ message: 'Server error', err });
-    }
-}
-
-const loginUser = async (req, res) => {
-    const { userName, password } = req.body
-    try {
-        const existingUser = await User.findOne({
-            $or: [
-                { email: userName },
-                { userName: userName }
-            ]
-        })
-        if (!existingUser) {
-            res.status(400).json({ message: 'Invalid credentials!' })
-        }
-        const isMatch = await existingUser.comparePassword(password);
-        if (!isMatch) {
-            res.status(400).json({ message: 'Invalid credentials!' })
-        }
-
-        const token = jwt.sign({ id: existingUser._id }, process.env.JWT_SECRET, { expiresIn: '1h' })
-
-        res.status(200).json({ token, user: existingUser })
-    } catch (err) {
-        res.status(500).json({ message: 'Server error' }, err)
-    }
-
-}
 
 const getUsers = async (req, res) => {
-
     const { page = 1, limit = 10 } = req.query;
     try {
-
         const users = await User.find()
             .skip((page - 1) * limit)
             .limit(Number(limit))
             .select('-passwordHash');
 
         const count = await User.countDocuments()
-
         res.status(200).json({
             message: 'Users retrived successfully!',
             users,
@@ -86,7 +26,51 @@ const getUsers = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, registerUser, getUsers }
+const getUser = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedUser = await User.findById(id);
+        if (!updatedUser) {
+            res.status(400).json({ message: 'User not found!', err })
+        }
+        res.json(updatedUser)
+    } catch (err) {
+        res.status(400).json({ message: 'Error Occured', err })
+    }
+
+}
+
+const updateUser = async (req, res) => {
+    const { userID } = req.params;
+    const updates = req.body
+
+    try {
+        const updatedUser = await User.findByIdAndUpdate({ _id: userID }, updates, { new: true });
+        if (!updatedUser) {
+            res.status(400).json({ message: 'User not found!', err })
+        }
+        res.json(updatedUser)
+    } catch (err) {
+        res.status(400).json({ message: 'Password failed updated', err })
+    }
+
+}
+const deleteUser = async (req, res) => {
+    try {
+        const { id: userID } = req.params
+        const user = await User.findOneAndDelete({ _id: userID })
+        if (!user) {
+            res.status(404).json({ msg: `No user found with id: ${userID}` })
+        }
+        res.status(200).json({ user })
+    } catch (error) {
+        res.status(500).json({ msg: error })
+    }
+
+}
+
+
+module.exports = { getUser, getUsers, updateUser, deleteUser }
 
 
 
