@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router()
 const authMiddleware = require('../middleware/auth/index')
 const {updateUser,  getUsers, getUser, deleteUser} = require('../controllers/user');
-const { updatePassword } = require('../controllers/auth');
+const { updatePassword, resetPassword, forgotPassword } = require('../controllers/auth');
 
 
 router.route('/').get(authMiddleware, getUsers)

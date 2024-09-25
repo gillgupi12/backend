@@ -1,8 +1,28 @@
 const User = require('../models/User')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const nodemailer = require('nodemailer');
 require('dotenv')
 
+
+
+const sendResetEmail = async( email, token) =>{
+    console.log(email, token)
+const transporter = nodemailer.createTransport({
+    service: 'Gmail',
+    auth: {
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
+    }
+});
+console.log(transporter)
+    const url = `http://localhost:4000/api/v1/reset-password/${token}`
+    await transporter.sendMail({
+        to: email,
+        subject: `Password Reset`,
+        html: `<p>Click <a href="${url}">here</a> to reset your password</p>`,
+    })
+}
 
 const registerUser = async (req, res) => {
     const { userName, email, password, firstName, lastName, dateOfBirth, profilePictureUrl, phoneNumber } = req.body
@@ -56,7 +76,6 @@ const loginUser = async (req, res) => {
 
 }
 
-
 const updatePassword = async (req, res) => {
     const { id } = req.params;
     const { currentPassword, newPassword } = req.body
@@ -79,8 +98,47 @@ const updatePassword = async (req, res) => {
     }
 }
 
+const forgotPassword = async (req, res)=>{
+    const {email} = req.body
 
-module.exports = { loginUser, registerUser, updatePassword, }
+    try{
+        const user = await User.findOne({email: email})
+        if(!user){
+          return  res.status(404).json({message: `User not found`, error: err})
+        }
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        await sendResetEmail(email, token);
+        res.send('Reset Email sent!')
+    }catch(err){
+        res.status(400).json({message: `Server error`, error: err})
+    }
+
+}
+
+const resetPassword = async (req, res)=>{
+    const { token} = req.params;
+    const{ password} = req.body;
+    console.log(token, password)
+    try{
+        const decoded = await jwt.verify(token, process.env.JWT_SECRET)
+        console.log(decoded)
+        const user = await User.findById(decoded.id);
+        if(!user){
+            return res.status(404).json({message: `User not found`, error: err})
+        }
+        console.log(user)
+        user.passwordHash = password;
+        await user.save();
+        res.send('Password has been reset!')
+    }catch(err){
+        res.status(400).json({message: `Server error`, error: err})
+    }
+
+}
+
+
+module.exports = { loginUser, registerUser, updatePassword, resetPassword, forgotPassword }
 
 
 
