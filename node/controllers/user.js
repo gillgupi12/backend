@@ -33,7 +33,7 @@ const getUser = async (req, res) => {
         if (!updatedUser) {
             res.status(400).json({ message: 'User not found!', err })
         }
-        res.json(updatedUser)
+        res.status(200).json(updatedUser)
     } catch (err) {
         res.status(400).json({ message: 'Error Occured', err })
     }
@@ -49,7 +49,7 @@ const updateUser = async (req, res) => {
         if (!updatedUser) {
             res.status(400).json({ message: 'User not found!', err })
         }
-        res.json(updatedUser)
+        res.status(200).json(updatedUser)
     } catch (err) {
         res.status(400).json({ message: 'Password failed updated', err })
     }
