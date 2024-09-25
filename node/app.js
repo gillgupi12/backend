@@ -1,5 +1,7 @@
 const express = require('express');
-require('../node/db/connect')
+const mongoose = require('mongoose')
+const connectionString = `${process.env.CONNECTION}`
+mongoose.connect(connectionString)
 const productRoutes = require('./routes/product')
 const brandRoutes = require('./routes/brand')
 const userRoutes = require('./routes/user')
