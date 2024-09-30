@@ -1,7 +1,10 @@
 import express, { json } from 'express';
 import { connect } from 'mongoose';
 import cors from 'cors';
+import brandRoutes from './routes/brand'
+import authRoutes from './routes/auth'
 import productRoutes from './routes/product'
+import userRoutes from './routes/user'
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -22,7 +25,10 @@ const corsOptions = {
 const app = express();
 app.use(cors(corsOptions))
 app.use(json())
+app.use('/api/v1/', authRoutes)
 app.use('/api/v1/products', productRoutes)
+app.use('/api/v1/brands', brandRoutes)
+app.use('/api/v1/users', userRoutes)
 
 
 const port = 4000;
