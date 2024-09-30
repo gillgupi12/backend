@@ -1,8 +1,8 @@
-const express = require('express')
+import express from 'express'
 
 const router = express.Router()
 
-const {createBrand, updateBrand, deleteBrand, getAllBrands, getBrand} = require('../controllers/brands')
+import { createBrand, updateBrand, deleteBrand, getAllBrands, getBrand } from '../controllers/brands'
 
 
 router.route('/').get(getAllBrands).post(createBrand)

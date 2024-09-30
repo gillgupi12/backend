@@ -1,6 +1,7 @@
-const Brands = require('../models/Brand')
+import { Request, Response } from 'express'
+import {Brands} from '../models/Brand'
 
-const getAllBrands = async (req, res) => {
+const getAllBrands = async (req: Request, res: Response) => {
     try {
         const brands = await Brands.find({})
         console.log(brands)
@@ -10,7 +11,7 @@ const getAllBrands = async (req, res) => {
         res.status(500).json({ msg: error })
     }
 }
-const getBrand = async (req, res) => {
+const getBrand = async (req: Request, res: Response) => {
     try {
         const { id: brandID } = req.params
         const brand = await Brands.findOne({ _id: brandID })
@@ -20,7 +21,7 @@ const getBrand = async (req, res) => {
     }
 }
 
-const createBrand = async (req, res) => {
+const createBrand = async (req: Request, res: Response) => {
     try {
         const brand = await Brands.create(req.body)
         console.log(brand)
@@ -30,15 +31,15 @@ const createBrand = async (req, res) => {
     }
 }
 
-const updateBrand = async (req, res) => {
+const updateBrand = async (req: Request, res: Response) => {
     try {
         const { id: brandID } = req.params
-        const product = await Brands.findByIdAndUpdate(
+        const brand = await Brands.findByIdAndUpdate(
             { _id: brandID },
             req.body, 
             { new: true }
         )
-        if (!product) {
+        if (!brand) {
             res.status(404).json({ msg: `No brand found with id: ${brandID}` })
         }
         res.status(201).json({ brand })
@@ -47,7 +48,7 @@ const updateBrand = async (req, res) => {
     }
 }
 
-const deleteBrand = async (req, res) => {
+const deleteBrand = async (req: Request, res: Response) => {
     try {
         const { id: brandID } = req.params
         const brand = await Brands.findOneAndDelete({ _id: brandID })
@@ -61,4 +62,4 @@ const deleteBrand = async (req, res) => {
 }
 
 
-module.exports = { getAllBrands, getBrand, createBrand, updateBrand, deleteBrand }
+export { getAllBrands, getBrand, createBrand, updateBrand, deleteBrand }

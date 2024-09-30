@@ -1,7 +1,7 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+import mongoose, {Schema, Model, Document} from 'mongoose';
+import bcrypt from 'bcrypt';
 
-const UserSchema = new mongoose.Schema({
+const UserSchema = new Schema({
     firstName: { type: String },
     lastName: { type: String },
     userName: { 
@@ -42,7 +42,7 @@ UserSchema.pre('save', async function(next) {
     next();
 });
 
-UserSchema.methods.comparePassword = function(password) {
+UserSchema.methods.comparePassword = function(password: string) {
     return  bcrypt.compare(password, this.passwordHash);
 };
 
@@ -53,4 +53,4 @@ UserSchema.set('toJSON', {
     }
 });
 
-module.exports = mongoose.model('User', UserSchema)
+export const User =  mongoose.model('User', UserSchema)

@@ -1,6 +1,7 @@
-const Products = require('../models/Product')
+import { Products } from '../models/Product'
+import {Request, Response} from 'express'
 
-const getAllProducts = async (req, res) => {
+const getAllProducts = async (req: Request, res: Response) => {
     try {
         const products = await Products.find({})
         console.log(products)
@@ -10,7 +11,7 @@ const getAllProducts = async (req, res) => {
         res.status(500).json({ msg: error })
     }
 }
-const getProduct = async (req, res) => {
+const getProduct = async (req: Request, res: Response) => {
     try {
         const { id: productID } = req.params
         const product = await Products.findOne({ _id: productID })
@@ -20,7 +21,7 @@ const getProduct = async (req, res) => {
     }
 }
 
-const createProduct = async (req, res) => {
+const createProduct = async (req: Request, res: Response) => {
     try {
         const product = await Products.create(req.body)
         console.log(product)
@@ -30,7 +31,7 @@ const createProduct = async (req, res) => {
     }
 }
 
-const updateProduct = async (req, res) => {
+const updateProduct = async (req: Request, res: Response) => {
     try {
         const { id: productID } = req.params
         const product = await Products.findByIdAndUpdate(
@@ -47,7 +48,7 @@ const updateProduct = async (req, res) => {
     }
 }
 
-const deleteProduct = async (req, res) => {
+const deleteProduct = async (req: Request, res: Response) => {
     try {
         const { id: productID } = req.params
         const product = await Products.findOneAndDelete({ _id: productID })
@@ -61,4 +62,4 @@ const deleteProduct = async (req, res) => {
 }
 
 
-module.exports = { getAllProducts, getProduct, createProduct, updateProduct, deleteProduct }
+export  { getAllProducts, getProduct, createProduct, updateProduct, deleteProduct }

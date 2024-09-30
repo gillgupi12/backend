@@ -1,15 +1,16 @@
-const User = require('../models/User')
-const bcrypt = require('bcrypt')
-const jwt = require('jsonwebtoken')
+import {User} from '../models/User'
+import bcrypt from 'bcrypt'
+import { Request, Response } from 'express'
+import jwt from 'jsonwebtoken'
 require('dotenv')
 
 
 
-const getUsers = async (req, res) => {
+const getUsers = async (req: Request, res: Response) => {
     const { page = 1, limit = 10 } = req.query;
     try {
         const users = await User.find()
-            .skip((page - 1) * limit)
+            .skip((Number(page) - 1) * Number(limit))
             .limit(Number(limit))
             .select('-passwordHash');
 
@@ -18,7 +19,7 @@ const getUsers = async (req, res) => {
             message: 'Users retrived successfully!',
             users,
             totalUsers: count,
-            totalPages: Math.ceil(count / limit),
+            totalPages: Math.ceil(count / Number(limit)),
             currentPage: Number(page)
         })
     } catch (err) {
@@ -26,12 +27,12 @@ const getUsers = async (req, res) => {
     }
 }
 
-const getUser = async (req, res) => {
+const getUser = async (req: Request, res: Response) => {
     const { id } = req.params;
     try {
         const updatedUser = await User.findById(id);
         if (!updatedUser) {
-            res.status(400).json({ message: 'User not found!', err })
+            res.status(400).json({ message: 'User not found!' })
         }
         res.status(200).json(updatedUser)
     } catch (err) {
@@ -40,14 +41,14 @@ const getUser = async (req, res) => {
 
 }
 
-const updateUser = async (req, res) => {
+const updateUser = async (req: Request, res: Response) => {
     const { userID } = req.params;
     const updates = req.body
 
     try {
         const updatedUser = await User.findByIdAndUpdate({ _id: userID }, updates, { new: true });
         if (!updatedUser) {
-            res.status(400).json({ message: 'User not found!', err })
+            res.status(400).json({ message: 'User not found!' })
         }
         res.status(200).json(updatedUser)
     } catch (err) {
@@ -55,7 +56,7 @@ const updateUser = async (req, res) => {
     }
 
 }
-const deleteUser = async (req, res) => {
+const deleteUser = async (req: Request, res: Response) => {
     try {
         const { id: userID } = req.params
         const user = await User.findOneAndDelete({ _id: userID })
@@ -70,7 +71,7 @@ const deleteUser = async (req, res) => {
 }
 
 
-module.exports = { getUser, getUsers, updateUser, deleteUser }
+export { getUser, getUsers, updateUser, deleteUser }
 
 
 
