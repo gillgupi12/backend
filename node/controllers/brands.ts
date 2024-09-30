@@ -4,10 +4,10 @@ import {Brands} from '../models/Brand'
 const getAllBrands = async (req: Request, res: Response) => {
     try {
         const brands = await Brands.find({})
-        console.log(brands)
+
         res.status(200).json({ brands })
     } catch (error) {
-        console.log(error)
+
         res.status(500).json({ msg: error })
     }
 }
@@ -24,7 +24,6 @@ const getBrand = async (req: Request, res: Response) => {
 const createBrand = async (req: Request, res: Response) => {
     try {
         const brand = await Brands.create(req.body)
-        console.log(brand)
         res.status(201).json({ brand })
     } catch (error) {
         res.status(500).json({ msg: error })

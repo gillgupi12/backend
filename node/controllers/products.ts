@@ -4,10 +4,10 @@ import {Request, Response} from 'express'
 const getAllProducts = async (req: Request, res: Response) => {
     try {
         const products = await Products.find({})
-        console.log(products)
+
         res.status(200).json({ products })
     } catch (error) {
-        console.log(error)
+
         res.status(500).json({ msg: error })
     }
 }
@@ -24,7 +24,7 @@ const getProduct = async (req: Request, res: Response) => {
 const createProduct = async (req: Request, res: Response) => {
     try {
         const product = await Products.create(req.body)
-        console.log(product)
+
         res.status(201).json({ product })
     } catch (error) {
         res.status(500).json({ msg: error })

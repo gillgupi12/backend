@@ -1,13 +1,11 @@
 import express, { json } from 'express';
 import { connect } from 'mongoose';
 import cors from 'cors';
-const dotenv = require('dotenv').config()
-const connectionString = `${process.env.CONNECTION}`
-connect(connectionString)
-const data = connect(connectionString).then((data)=> console.log(data))
 import productRoutes from './routes/product'
+import dotenv from 'dotenv';
+dotenv.config();
 
-
+const connectionString = `${process.env.CONNECTION}`
 const connectDB = async () => {
     try {
         await connect(connectionString)

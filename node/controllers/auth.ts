@@ -126,19 +126,16 @@ const forgotPassword = async (req: Request, res: Response) => {
 const resetPassword = async (req: Request, res: Response) => {
     const { token } = req.params;
     const { password } = req.body;
-    console.log(token, password)
     try {
         const secret = process.env.JWT_TOKEN
         if (!secret) {
             throw new Error('secret doesnt exist')
         }
         const decoded = verify(token, secret)
-        console.log(decoded)
         const user = await User.findById(decoded);
         if (!user) {
             return res.status(404).json({ message: `User not found` })
         }
-        console.log(user)
         user.passwordHash = password;
         await user.save();
         res.send('Password has been reset!')
