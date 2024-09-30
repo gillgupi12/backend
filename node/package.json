@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node ./dist/app.js",
     "build": "tsc",
-    "dev" : "nodemon --esm ./app.ts"
+    "dev": "nodemon --esm ./app.ts",
+    "doc": "docker compose up --build"
   },
   "author": "",
   "license": "ISC",
