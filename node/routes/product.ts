@@ -1,8 +1,7 @@
 import { Router } from 'express'
+import { getAllProducts, createProduct, getProduct, updateProduct, deleteProduct } from '../controllers/products'
 
 const router = Router()
-
-import { getAllProducts, createProduct, getProduct, updateProduct, deleteProduct } from '../controllers/products'
 
 router.route('/').get(getAllProducts).post(createProduct)
 router.route('/:id').get(getProduct).patch(updateProduct).delete(deleteProduct)

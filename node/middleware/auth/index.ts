@@ -8,7 +8,6 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction): void =
             res.status(401).json({ message: 'Access denied. No token provided.' });
             return;
         }
-
         const secret = process.env.JWT_SECRET;
         if (!secret) {
             throw new Error('Secret not found!');
@@ -22,4 +21,5 @@ const authMiddleware = (req: Request, res: Response, next: NextFunction): void =
         res.status(400).json({ message: 'Invalid token!' });
     }
 };
+
 export default authMiddleware;

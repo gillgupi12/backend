@@ -1,6 +1,7 @@
-import express, {Response, Request} from 'express';
-const router = express.Router()
+import express from 'express';
 import { loginUser, registerUser, forgotPassword, resetPassword } from '../controllers/auth'
+
+const router = express.Router()
 
 router.route('/login').post(loginUser);
 router.route('/register').post(registerUser);

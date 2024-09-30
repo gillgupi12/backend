@@ -24,15 +24,18 @@ const sendResetEmail = async (email: any, token: any) => {
 }
 
 const registerUser = async (req: Request, res: Response) => {
-    const { userName, email, password, firstName, lastName, dateOfBirth, profilePictureUrl, phoneNumber } = req.body
+
     try {
+        const { userName, email, password, firstName, lastName, dateOfBirth, profilePictureUrl, phoneNumber } = req.body
         const existingUser = await User.findOne({ userName })
         if (existingUser) {
-            return res.status(400).json({ message: 'User already exists' });
+             res.status(400).json({ message: 'User already exists' });
+             return;
         }
         const existingEmail = await User.findOne({ email })
         if (existingEmail) {
-            return res.status(400).json({ message: 'Email already exists' });
+            res.status(400).json({ message: 'Email already exists' });
+            return;
         }
         const newUser = new User({
             userName,
@@ -52,9 +55,10 @@ const registerUser = async (req: Request, res: Response) => {
 }
 
 const loginUser = async (req: Request, res: Response) => {
-    const { userName, password } = req.body
+
 
     try {
+        const { userName, password } = req.body
         const existingUser = await User.findOne({
             $or: [
                 { email: userName },
@@ -62,11 +66,13 @@ const loginUser = async (req: Request, res: Response) => {
             ]
         })
         if (!existingUser) {
-            return res.status(400).json({ message: 'Invalid credentials!' })
+             res.status(400).json({ message: 'Invalid credentials!' })
+             return;
         }
         const isMatch = await compare(password, existingUser.passwordHash)
         if (!isMatch) {
-            return res.status(400).json({ message: 'Password does not match!' })
+             res.status(400).json({ message: 'Password does not match!' })
+             return;
         }
         const secret = process.env.JWT_SECRET
         if (!secret) {
@@ -108,7 +114,8 @@ const forgotPassword = async (req: Request, res: Response) => {
     try {
         const user = await User.findOne({ email: email })
         if (!user) {
-            return res.status(404).json({ message: `User not found` })
+            res.status(404).json({ message: `User not found` })
+            return;
         }
         const secret = process.env.JWT_SECRET;
         if (secret) {
@@ -138,7 +145,8 @@ const resetPassword = async (req: Request, res: Response) => {
         const decoded = verify(token, secret) as DecodedToken;
         const user = await User.findById(decoded.id);
         if (!user) {
-            return res.status(404).json({ message: `User not found` })
+            res.status(404).json({ message: `User not found` });
+            return;
         }
         user.passwordHash = password;
         await user.save();
