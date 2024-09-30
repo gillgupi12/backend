@@ -70,7 +70,7 @@ const loginUser = async (req: Request, res: Response) => {
         }
         const secret = process.env.JWT_SECRET
         if (!secret) {
-           throw new Error('Secret not found!')
+            throw new Error('Secret not found!')
         }
         const token = sign({ id: existingUser._id }, secret, { expiresIn: '1h' })
         res.status(200).json({ token, user: existingUser })
@@ -81,24 +81,24 @@ const loginUser = async (req: Request, res: Response) => {
 }
 
 const updatePassword = async (req: Request, res: Response) => {
-    const { id } = req.params;
-    const { currentPassword, newPassword } = req.body
     try {
-
+        const { id } = req.params;
+        const { currentPassword, newPassword } = req.body
         const user = await User.findOne({ _id: id })
         if (!user) {
-            return res.status(404).json({ message: `User with id ${id} doesn't exist!` })
+            res.status(404).json({ message: `User with id ${id} doesn't exist!` });
+            return;
         }
         const isMatch = await compare(currentPassword, user.passwordHash);
         if (!isMatch) {
-            return res.status(401).json({ error: `Current password is incorrect` })
+            res.status(401).json({ error: `Current password is incorrect` });
+            return;
         }
         user.passwordHash = newPassword;
         await user.save()
-       return res.status(200).json({ message: `Password has been updated successfully!` })
-
+        res.status(200).json({ message: `Password has been updated successfully!` })
     } catch (err) {
-       return  res.status(400).json({ message: 'Failed to update password', err })
+        res.status(400).json({ message: 'Failed to update password', err })
     }
 }
 
@@ -122,6 +122,10 @@ const forgotPassword = async (req: Request, res: Response) => {
     }
 
 }
+interface DecodedToken {
+    id: string;
+    // Add other properties if your token includes them
+}
 
 const resetPassword = async (req: Request, res: Response) => {
     const { token } = req.params;
@@ -131,8 +135,8 @@ const resetPassword = async (req: Request, res: Response) => {
         if (!secret) {
             throw new Error('secret doesnt exist')
         }
-        const decoded = verify(token, secret)
-        const user = await User.findById(decoded);
+        const decoded = verify(token, secret) as DecodedToken;
+        const user = await User.findById(decoded.id);
         if (!user) {
             return res.status(404).json({ message: `User not found` })
         }
@@ -146,7 +150,7 @@ const resetPassword = async (req: Request, res: Response) => {
 }
 
 
-export  { loginUser, registerUser, updatePassword, resetPassword, forgotPassword }
+export { loginUser, registerUser, updatePassword, resetPassword, forgotPassword }
 
 
 
