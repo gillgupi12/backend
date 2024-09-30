@@ -4,10 +4,9 @@
   "description": "personal",
   "main": "index.js",
   "scripts": {
-    "start": "node app.js",
+    "start": "node ./dist/app.js",
     "build": "tsc",
     "dev" : "nodemon --esm ./app.ts"
-  
   },
   "author": "",
   "license": "ISC",
