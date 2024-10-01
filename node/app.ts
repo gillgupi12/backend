@@ -1,5 +1,4 @@
 import express, { json } from 'express';
-import { connect } from 'mongoose';
 import cors from 'cors';
 import brandRoutes from './routes/brand'
 import authRoutes from './routes/auth'
