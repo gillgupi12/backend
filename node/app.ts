@@ -21,10 +21,10 @@ app.use(json())
 
 //Routes
 app.use('/api/v1/', authRoutes)
-app.use('/api/v1/products', productRoutes)
-app.use('/api/v1/brands', brandRoutes)
-app.use('/api/v1/users', userRoutes)
-app.use('/api/v1/orders', userRoutes)
+app.use('/api/v1/product', productRoutes)
+app.use('/api/v1/brand', brandRoutes)
+app.use('/api/v1/user', userRoutes)
+app.use('/api/v1/order', userRoutes)
 
 //Set the ports
 const port = process.env.PORT || 4000;
