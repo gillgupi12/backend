@@ -1,10 +1,6 @@
 import {User} from '../models/User'
-import bcrypt from 'bcrypt'
 import { Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
 require('dotenv')
-
-
 
 const getUsers = async (req: Request, res: Response) => {
     const { page = 1, limit = 10 } = req.query;
@@ -42,11 +38,11 @@ const getUser = async (req: Request, res: Response) => {
 }
 
 const updateUser = async (req: Request, res: Response) => {
-    const { userID } = req.params;
+    const { userId } = req.params;
     const updates = req.body
 
     try {
-        const updatedUser = await User.findByIdAndUpdate({ _id: userID }, updates, { new: true });
+        const updatedUser = await User.findByIdAndUpdate({ _id: userId }, updates, { new: true });
         if (!updatedUser) {
             res.status(400).json({ message: 'User not found!' })
         }
@@ -58,10 +54,10 @@ const updateUser = async (req: Request, res: Response) => {
 }
 const deleteUser = async (req: Request, res: Response) => {
     try {
-        const { id: userID } = req.params
-        const user = await User.findOneAndDelete({ _id: userID })
+        const { id: userId } = req.params
+        const user = await User.findOneAndDelete({ _id: userId })
         if (!user) {
-            res.status(404).json({ msg: `No user found with id: ${userID}` })
+            res.status(404).json({ msg: `No user found with id: ${userId}` })
         }
         res.status(200).json({ user })
     } catch (error) {

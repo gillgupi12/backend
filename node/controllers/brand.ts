@@ -1,9 +1,9 @@
 import { Request, Response } from 'express'
-import {Brands} from '../models/Brand'
+import { Brand } from '../models/Brand'
 
 const getAllBrands = async (req: Request, res: Response) => {
     try {
-        const brands = await Brands.find({})
+        const brands = await Brand.find({})
 
         res.status(200).json({ brands })
     } catch (error) {
@@ -13,8 +13,8 @@ const getAllBrands = async (req: Request, res: Response) => {
 }
 const getBrand = async (req: Request, res: Response) => {
     try {
-        const { id: brandID } = req.params
-        const brand = await Brands.findOne({ _id: brandID })
+        const { id: brandId } = req.params
+        const brand = await Brand.findOne({ _id: brandId })
         res.status(200).json({ brand })
     } catch (error) {
         res.status(404).json({ msg: error })
@@ -23,7 +23,7 @@ const getBrand = async (req: Request, res: Response) => {
 
 const createBrand = async (req: Request, res: Response) => {
     try {
-        const brand = await Brands.create(req.body)
+        const brand = await Brand.create(req.body)
         res.status(201).json({ brand })
     } catch (error) {
         res.status(500).json({ msg: error })
@@ -32,14 +32,14 @@ const createBrand = async (req: Request, res: Response) => {
 
 const updateBrand = async (req: Request, res: Response) => {
     try {
-        const { id: brandID } = req.params
-        const brand = await Brands.findByIdAndUpdate(
-            { _id: brandID },
+        const { id: brandId } = req.params
+        const brand = await Brand.findByIdAndUpdate(
+            { _id: brandId },
             req.body, 
             { new: true }
         )
         if (!brand) {
-            res.status(404).json({ msg: `No brand found with id: ${brandID}` })
+            res.status(404).json({ msg: `No brand found with id: ${brandId}` })
         }
         res.status(201).json({ brand })
     } catch (error) {
@@ -49,10 +49,10 @@ const updateBrand = async (req: Request, res: Response) => {
 
 const deleteBrand = async (req: Request, res: Response) => {
     try {
-        const { id: brandID } = req.params
-        const brand = await Brands.findOneAndDelete({ _id: brandID })
+        const { id: brandId } = req.params
+        const brand = await Brand.findOneAndDelete({ _id: brandId })
         if (!brand) {
-            res.status(404).json({ msg: `No brand found with id: ${brandID}` })
+            res.status(404).json({ msg: `No brand found with id: ${brandId}` })
         }
         res.status(200).json({ brand })
     } catch (error) {

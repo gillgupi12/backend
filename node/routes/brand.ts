@@ -1,5 +1,5 @@
 import express from 'express'
-import { createBrand, updateBrand, deleteBrand, getAllBrands, getBrand } from '../controllers/brands'
+import { createBrand, updateBrand, deleteBrand, getAllBrands, getBrand } from '../controllers/brand'
 
 const router = express.Router()
 

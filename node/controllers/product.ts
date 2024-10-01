@@ -1,9 +1,9 @@
-import { Products } from '../models/Product'
+import { Product } from '../models/Product'
 import {Request, Response} from 'express'
 
 const getAllProducts = async (req: Request, res: Response) => {
     try {
-        const products = await Products.find({})
+        const products = await Product.find({})
 
         res.status(200).json({ products })
     } catch (error) {
@@ -13,8 +13,8 @@ const getAllProducts = async (req: Request, res: Response) => {
 }
 const getProduct = async (req: Request, res: Response) => {
     try {
-        const { id: productID } = req.params
-        const product = await Products.findOne({ _id: productID })
+        const { id: productId } = req.params
+        const product = await Product.findOne({ _id: productId })
         res.status(200).json({ product })
     } catch (error) {
         res.status(404).json({ msg: error })
@@ -23,7 +23,7 @@ const getProduct = async (req: Request, res: Response) => {
 
 const createProduct = async (req: Request, res: Response) => {
     try {
-        const product = await Products.create(req.body)
+        const product = await Product.create(req.body)
 
         res.status(201).json({ product })
     } catch (error) {
@@ -33,14 +33,14 @@ const createProduct = async (req: Request, res: Response) => {
 
 const updateProduct = async (req: Request, res: Response) => {
     try {
-        const { id: productID } = req.params
-        const product = await Products.findByIdAndUpdate(
-            { _id: productID },
+        const { id: productId } = req.params
+        const product = await Product.findByIdAndUpdate(
+            { _id: productId },
             req.body, 
             { new: true }
         )
         if (!product) {
-            res.status(404).json({ msg: `No product found with id: ${productID}` })
+            res.status(404).json({ msg: `No product found with id: ${productId}` })
         }
         res.status(201).json({ product })
     } catch (error) {
@@ -50,10 +50,10 @@ const updateProduct = async (req: Request, res: Response) => {
 
 const deleteProduct = async (req: Request, res: Response) => {
     try {
-        const { id: productID } = req.params
-        const product = await Products.findOneAndDelete({ _id: productID })
+        const { id: productId } = req.params
+        const product = await Product.findOneAndDelete({ _id: productId })
         if (!product) {
-            res.status(404).json({ msg: `No product found with id: ${productID}` })
+            res.status(404).json({ msg: `No product found with id: ${productId}` })
         }
         res.status(200).json({ product })
     } catch (error) {
