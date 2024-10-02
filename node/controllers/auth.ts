@@ -15,11 +15,11 @@ const sendResetEmail = async (email: any, token: any) => {
         }
     });
 
-    const url = `http://localhost:4000/api/v1/reset-password/${token}`
+    const resetpasswordURL = `${process.env.FRONTEND_URL}/reset-password/${token}`
     await transporter.sendMail({
         to: email,
         subject: `Password Reset`,
-        html: `<p>Click <a href="${url}">here</a> to reset your password</p>`,
+        html: `<p>Click <a href="${resetpasswordURL}">here</a> to reset your password</p>`,
     })
 }
 
@@ -138,7 +138,7 @@ const resetPassword = async (req: Request, res: Response) => {
     const { token } = req.params;
     const { password } = req.body;
     try {
-        const secret = process.env.JWT_TOKEN
+        const secret = process.env.JWT_SECRET;
         if (!secret) {
             throw new Error('secret doesnt exist')
         }

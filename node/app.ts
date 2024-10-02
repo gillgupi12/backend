@@ -5,10 +5,12 @@ import authRoutes from './routes/auth'
 import productRoutes from './routes/product'
 import userRoutes from './routes/user'
 import connectDB from './db/connect'
+import dotenv from 'dotenv'
+dotenv.config()
 
 //Cors options
 const corsOptions = {
-    origin: '',
+    origin: `${process.env.FRONTEND_URL}`,
     optionsSuccessStatus: 200
 }
 //Create Expres app
