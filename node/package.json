@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node ./dist/app.js",
     "build": "tsc",
-    "dev": "nodemon --esm ./app.ts",
+    "dev": "nodemon --exec ts-node ./app.ts",
     "doc": "docker compose up --build"
   },
   "author": "",
