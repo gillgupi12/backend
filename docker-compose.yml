@@ -13,6 +13,7 @@ services:
         EMAIL_USER: ${EMAIL_USER}
         EMAIL_PASSWORD: ${EMAIL_PASSWORD}
         PORT: ${PORT}
+        FRONTEND_URL: ${FRONTEND_URL}
     ports:
       - 4000:4000
     healthcheck:
