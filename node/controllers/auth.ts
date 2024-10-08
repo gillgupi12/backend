@@ -12,6 +12,9 @@ const sendResetEmail = async (email: any, token: any) => {
         auth: {
             user: process.env.EMAIL_USER,
             pass: process.env.EMAIL_PASSWORD
+        },
+        tls: {
+            rejectUnauthorized: false
         }
     });
 
@@ -20,7 +23,7 @@ const sendResetEmail = async (email: any, token: any) => {
         to: email,
         subject: `Password Reset`,
         html: `<p>Click <a href="${resetpasswordURL}">here</a> to reset your password</p>`,
-    })
+    });
 }
 
 const registerUser = async (req: Request, res: Response) => {
@@ -29,8 +32,8 @@ const registerUser = async (req: Request, res: Response) => {
         const { userName, email, password, firstName, lastName, dateOfBirth, profilePictureUrl, phoneNumber } = req.body
         const existingUser = await User.findOne({ userName })
         if (existingUser) {
-             res.status(400).json({ message: 'User already exists' });
-             return;
+            res.status(400).json({ message: 'User already exists' });
+            return;
         }
         const existingEmail = await User.findOne({ email })
         if (existingEmail) {
@@ -66,13 +69,13 @@ const loginUser = async (req: Request, res: Response) => {
             ]
         })
         if (!existingUser) {
-             res.status(400).json({ message: 'Invalid credentials!' })
-             return;
+            res.status(400).json({ message: 'Invalid credentials!' })
+            return;
         }
         const isMatch = await compare(password, existingUser.passwordHash)
         if (!isMatch) {
-             res.status(400).json({ message: 'Password does not match!' })
-             return;
+            res.status(400).json({ message: 'Password does not match!' })
+            return;
         }
         const secret = process.env.JWT_SECRET
         if (!secret) {
@@ -112,20 +115,20 @@ const forgotPassword = async (req: Request, res: Response) => {
     const { email } = req.body
 
     try {
-        const user = await User.findOne({ email: email })
+        const user = await User.findOne({ email: email });
         if (!user) {
-            res.status(404).json({ message: `User not found` })
+            res.status(404).json({ message: 'User not found' });
             return;
         }
+
         const secret = process.env.JWT_SECRET;
         if (secret) {
             const token = sign({ id: user._id }, secret, { expiresIn: '1h' });
             await sendResetEmail(email, token);
+            res.status(200).json({message: 'Email has been sent sucessfully!'})
         }
-
-        res.send('Reset Email sent!')
     } catch (err) {
-        res.status(400).json({ message: `Server error`, error: err })
+        res.status(400).json({ message: 'Server error', error: err });
     }
 
 }
@@ -138,6 +141,7 @@ const resetPassword = async (req: Request, res: Response) => {
     const { token } = req.params;
     const { password } = req.body;
     try {
+
         const secret = process.env.JWT_SECRET;
         if (!secret) {
             throw new Error('secret doesnt exist')
